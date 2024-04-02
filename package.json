@@ -1,0 +1,33 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "laravel-mix": "^6.0.6",
+        "lodash": "^4.17.19",
+        "postcss": "^8.1.14",
+        "vue-loader": "^16.2.0"
+    },
+    "dependencies": {
+        "@amcharts/amcharts4": "^4.10.38",
+        "@vueup/vue-quill": "^1.2.0",
+        "axios": "^1.4.0",
+        "chart.js": "^4.4.0",
+        "cheerio": "^1.0.0-rc.12",
+        "jquery": "^3.7.0",
+        "sweetalert2": "^11.7.20",
+        "vue": "^3.3.4",
+        "vue-chartjs": "^5.2.0",
+        "vue-inner-image-zoom": "^2.0.0",
+        "vue-loading-overlay": "6.0",
+        "vue-router": "^4.0.13",
+        "vue3-emoji-picker": "^1.1.7"
+    }
+}
