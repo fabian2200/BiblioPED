@@ -303,7 +303,6 @@ class DiccionarioController extends Controller{
                 "significado" => $significado,
                 "bandera" => $bandera,
                 "imagenes" => $palabra_encontrada->imagenes,
-                "imagenes" => [],
                 "sugerencias" => $bandera2 == true ?  $palabra_similar[1] : []
             ];
         }else{

@@ -275,7 +275,6 @@
                                     <a style="padding: 14px" class="nav-link nav-link-label btn btn-primary " href="/manuales">
                                         <i class="fas fa-file-pdf"></i> Manual de uso
                                     </a>
-                                
                                 </div>
                             </a>
                         </li>
