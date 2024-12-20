@@ -38,7 +38,7 @@
                                 <br>
                                 <br>
                                 <h2>{{datos.titulo}}</h2>
-                                <video :key="'video'+index" style="width: 100%;" height="390" controls>
+                                <video :key="'video'+index" style="width: 100%; left: 24%; width: 50%; position: relative;" height="390" controls>
                                     <source :src="'/videos/'+rutaVideo" type="video/mp4">
                                 </video>
                                 <hr>
