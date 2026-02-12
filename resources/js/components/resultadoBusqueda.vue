@@ -210,6 +210,7 @@ export default {
             document.documentElement.scrollTop = 0;
         },
         async corregirCadena(){
+            this.loading = true;
             await busquedaService.corregirCadena(this.texto).then(respuesta => {
                 this.texto = respuesta.data.cadena;
                 this.corregidoTexto = respuesta.data.corregido;
@@ -217,7 +218,6 @@ export default {
             });
         },
         BuscarResultado: async function () {
-            this.loading = true;
             try {
                 await busquedaService.busqueda(this.texto, this.tipo, this.pagina).then(respuesta => {
                     this.datos = respuesta.data;

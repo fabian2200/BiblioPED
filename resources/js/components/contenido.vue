@@ -26,6 +26,7 @@
                                     <li data-toggle="tooltip" data-placement="top" title="Compartir"  v-if="sessionData.tipo_registro == 'docente'"><a type="button"  data-toggle="modal" data-target="#modalCompartir"><i class="fa-2x fas fa-share-alt"></i></a></li>
                                     <li data-toggle="tooltip" data-placement="top" title="Crear Foro" v-if="sessionData.tipo_registro == 'docente'"><a type="button"  data-toggle="modal" data-target="#modalForo"><i class="fa-2x fas fa-comments"></i></a></li>
                                     <li data-toggle="tooltip" data-placement="top" title="Marcar como favorito"><a @click="agregarFavorito"><i :class="favorito == true ? 'fas fa-star fa-2x' : 'fa-2x far fa-star'" :style="favorito ? 'color: #009c9f' : 'color: #404e67'"></i></a></li>
+                                    <li data-toggle="tooltip" data-placement="top" title="Resumir"><a type="button" data-toggle="modal" data-target="#modalResumen"><i class="fa-2x fas fa-file-alt"></i></a></li>
                                     <li data-toggle="tooltip" data-placement="top" title="Maximizar"><a data-action="expand"><i class="fa-2x fas fa-compress"></i></a></li>
                                 </ul>
                             </div>
@@ -272,11 +273,44 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade text-left" id="modalResumen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel17" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #1976d2; color: white;">
+                        <h4 class="modal-title" id="myModalLabel17">Resumen del contenido mediante IA</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 style="color: #ff425c;">{{ titulo_contenido }}</h3>
+                            </div>
+                            <div class="col-12">
+                                <label for="instrucciones_usuario"><strong>Instrucciones para el resumen o pregunta que desees hacer sobre el contenido</strong></label>
+                                <textarea cols="30" rows="4" v-model="instrucciones_usuario" class="form-control" name="instrucciones_usuario" id="instrucciones_usuario"></textarea>
+                            </div>
+                            <div class="col-12 mt-2" v-if="resultado_resumen != ''">
+                                <label for="resultado_resumen"><strong>Resultado de la IA</strong></label>
+                                <div id="resultado_resumen" v-html="resultado_resumen"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" @click="realizarResumenIA" class="btn btn-outline-primary"><i class="fas fa-play"></i> Ejecutar</button>
+                        <button type="button" @click="cerrarModalResumen" class="btn btn-outline-danger"><i class="fas fa-times"></i> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <SkeletonResumen v-if="loading_resumen" />
     </div>
 </template>
 <script>
 import * as busquedaService from "../services/busqueda";
+import * as iaService from "../services/ia";
 import Skeleton from './skeleton/skeleton.vue';
+import SkeletonResumen from './skeleton/skeletonResumen.vue';
 import * as usuarioService from "../services/usuario";
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -284,6 +318,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 export default {
     components: {
         Skeleton,
+        SkeletonResumen,
         QuillEditor
     },
     data() {
@@ -308,7 +343,12 @@ export default {
             tipoMarcador: 1,
             subrayados: [],
             apunteContenido: null,
-            contenido_html: ""
+            contenido_html: "",
+            titulo_contenido: "",
+            contenido_para_resumen: "",
+            instrucciones_usuario: "",
+            loading_resumen: false,
+            resultado_resumen: "",
         };
     },
     mounted() {
@@ -408,6 +448,7 @@ export default {
                 await busquedaService.busquedaContenido(this.id, this.tipo).then(respuesta => {
                     this.datos = respuesta.data.datos[0];
                     document.title =  this.datos.titulo;
+                    this.titulo_contenido = this.datos.titulo;
                     this.contenido_html = this.datos.cont_documento;
                     this.loading = false;
                     this.verificarFavorito();
@@ -666,6 +707,26 @@ export default {
             }else{
                 toastr.warning("¡No hay apuntes que guardar!");
             }
+        },
+        async realizarResumenIA(){
+            this.loading_resumen = true;
+            try {
+                this.contenido_para_resumen = $('#content').text();
+                this.contenido_para_resumen = this.contenido_para_resumen.replace(/\s+/g, " ");
+                const respuesta = await iaService.realizarResumen(this.contenido_para_resumen, this.instrucciones_usuario);
+                this.resultado_resumen = respuesta.data.cadena;
+            } catch (error) {
+                console.log(error);
+            } finally {
+                this.loading_resumen = false;
+            }
+        },
+        cerrarModalResumen(){
+            $('#modalResumen').modal('hide');
+            this.resultado_resumen = '';
+            this.instrucciones_usuario = '';
+            this.contenido_para_resumen = '';
+            this.loading_resumen = false;
         }
     }
 }
