@@ -149,7 +149,9 @@ Route::prefix('api')->group(function () {
 });
 
 Route::get('/{any}', function () {
-    return view('vue');
+    $url_juegos = 'http://192.168.1.222/juegos';
+
+    return view('vue', compact('url_juegos'));
 })->where('any', '.*');
 
 

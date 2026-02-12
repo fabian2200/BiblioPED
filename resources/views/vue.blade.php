@@ -162,6 +162,18 @@
         #toast-container > div {
             opacity:1;
         }
+
+        .btn-warning2 {
+            border-color: #f2c701 !important;
+            background-color: #f2c701 !important;
+            color: #1b2942 !important;
+        }
+
+        .btn-warning2:hover {
+            border-color: #f0d664 !important;
+            background-color: #f0d664 !important;
+            color: #1b2942 !important;
+        }
     </style>
 </head>
 
@@ -258,6 +270,11 @@
                                 src="{{ asset('img/letras.png') }}" height="40"></a>
                     </ul>
                     <ul class="nav navbar-nav float-right">
+                        <li class="nav-item" style="display: flex; justify-content: center; align-items: center; margin-right: 20px">
+                            <a target="_blank" style="padding: 0.6rem 0.8rem 0.6rem 0.9rem" class="nav-link nav-link-label btn btn-warning2" href="{{ $url_juegos }}">
+                                <i class="fas fa-gamepad"></i> Juegos
+                            </a>
+                        </li>
                         <li class="dropdown dropdown-user nav-item btn btn-warning" style="display: flex;justify-content: center;align-items: center;margin-right: 14px;padding: 0px;height: 37px;margin-top: 9px;">
                             <a class="dropdown-toggle nav-link dropdown-user-link" href="#"
                                 data-toggle="dropdown">
