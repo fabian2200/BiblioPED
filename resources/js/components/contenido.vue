@@ -709,12 +709,21 @@ export default {
             }
         },
         async realizarResumenIA(){
-            this.loading_resumen = true;
+            //this.loading_resumen = true;
+            this.resultado_resumen = ""; // limpiar antes de empezar
+
             try {
                 this.contenido_para_resumen = $('#content').text();
                 this.contenido_para_resumen = this.contenido_para_resumen.replace(/\s+/g, " ");
-                const respuesta = await iaService.realizarResumen(this.contenido_para_resumen, this.instrucciones_usuario);
-                this.resultado_resumen = respuesta.data.cadena;
+
+                await iaService.realizarResumenStreaming(
+                    this.contenido_para_resumen,
+                    this.instrucciones_usuario,
+                    (chunk) => {
+                        this.resultado_resumen += chunk; // 🔥 se va escribiendo solo
+                    }
+                );
+
             } catch (error) {
                 console.log(error);
             } finally {

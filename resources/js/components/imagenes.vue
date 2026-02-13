@@ -122,7 +122,7 @@
 <script>
 import * as busquedaService from "../services/busqueda";
 import Skeleton from './skeleton/skeletonImagen.vue';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import TipoBusqueda from './tipoBusqueda';
 import headerColegio from './header/header';
 

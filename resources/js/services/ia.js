@@ -1,4 +1,4 @@
-export async function realizarResumen(textoOriginal, instruccionesusuario) {
+export async function realizarResumenStreaming(textoOriginal, instruccionesusuario, onChunk){
     const url = "http://localhost:11434/api/generate";
 
     const prompt = `
@@ -17,29 +17,38 @@ export async function realizarResumen(textoOriginal, instruccionesusuario) {
     `;
 
     try {
-        const { data } = await axios.post(url, {
-            model: "qwen2.5:7b",
-            prompt: prompt,
-            stream: false,
-            options: {
-                temperature: 0.1,
-                num_predict: 200-400
-            }
-        }, {
-            // Configuración crucial para evitar errores de CORS preflight
+        const response = await fetch(url, {
+            method: "POST",
             headers: {
-                'Content-Type': 'text/plain',
-            }
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: "qwen2.5:3b",
+                prompt: prompt,
+                stream: true,
+                options: {
+                    temperature: 0.1,
+                }
+            })
         });
 
-        const resumen = data.response.trim();
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
 
-        // 3. Verificación de si hubo cambios
-        return {
-            data: {
-                cadena: resumen,
-                resumido: true,
-                success: true
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+
+            const lineas = chunk.split("\n").filter(l => l.trim() !== "");
+
+            for (const linea of lineas) {
+                const json = JSON.parse(linea);
+
+                if (json.response) {
+                    onChunk(json.response);
+                }
             }
         }
     } catch (error) {
